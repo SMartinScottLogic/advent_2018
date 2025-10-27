@@ -92,8 +92,8 @@ where
     info!(
         "{}{} {}: {:?}",
         Paint::mask("🎄 "),
-        Paint::bold(&Paint::green(filename)),
-        Paint::bold(&Paint::yellow("solution")),
+        filename,
+        "solution",
         solution
     );
     span!(Level::INFO, "part1").in_scope(|| {
@@ -101,7 +101,7 @@ where
             Ok(r) => info!(
                 "{}part1 answer is {}",
                 Paint::mask("🎅 "),
-                Paint::bold(&Paint::red(r))
+                r
             ),
             Err(e) => error!("{}part1 failed: {}", Paint::mask("🎅 "), e),
         }
@@ -111,7 +111,7 @@ where
             Ok(r) => info!(
                 "{}part2 answer is {}",
                 Paint::mask("🎅 "),
-                Paint::bold(&Paint::red(r))
+                r
             ),
             Err(e) => error!("{}part2 failed: {}", Paint::mask("🎅 "), e),
         }
