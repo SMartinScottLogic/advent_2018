@@ -27,7 +27,6 @@ impl<T: std::io::Read> TryFrom<BufReader<T>> for Solution {
                 let delta = delta.parse::<ResultType>().unwrap();
                 solution.add_delta(delta);
             }
-
         }
         Ok(solution)
     }
@@ -57,4 +56,3 @@ impl utils::Solution for Solution {
         Ok(0)
     }
 }
-
