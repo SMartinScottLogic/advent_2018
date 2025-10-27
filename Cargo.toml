@@ -1,0 +1,33 @@
+[workspace]
+resolver = "2"
+members = [
+    "utils",
+    "template",
+    "xtask", 
+]
+
+[workspace.dependencies]
+# Flexible concrete Error type built on std::error::Error
+anyhow = {version = "1.0.100", default-features = false}
+# A dead simple ANSI terminal color painting library.
+yansi = {version = "1.0.0-gamma", default-features = false}
+itertools = {version = "0.14.0", default-features = false}
+# A lightweight regex engine that optimizes for binary size and compilation time.…
+regex-lite = {version = "0.1.8", default-features = false, features = ["std","string"]}
+# Pathfinding, flow, and graph algorithms
+pathfinding = {version = "4.14.0", default-features = false}
+
+tracing = {version = "0.1", default-features = false, features = ["attributes"]}
+tracing-subscriber = {version = "0.3.20", default-features = false}
+tracing-test = "0.2"
+lazy_static = "1.4"
+
+strum = {version = "0.26.3", default-features = false}                    # Helpful macros for working with enums and strings
+strum_macros = {version = "0.26.4", default-features = false}             # Helpful macros for working with enums and strings
+array2d = "0.3"
+nom = "8.0.0"                       # A byte-oriented, zero-copy, parser combinators library
+z3 = "0.19.2"
+memoize = "0.5.1"          # Attribute macro for auto-memoizing functions with somewhat-simple signatures
+
+[profile.release]
+debug = true
