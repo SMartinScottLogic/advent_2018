@@ -22,7 +22,7 @@ tracing-subscriber = {version = "0.3.20", default-features = false}
 tracing-test = "0.2"
 lazy_static = "1.4"
 
-strum = {version = "0.26.3", default-features = false}                    # Helpful macros for working with enums and strings
+strum = {version = "0.27.2", default-features = false}                    # Helpful macros for working with enums and strings
 strum_macros = {version = "0.27.2", default-features = false}             # Helpful macros for working with enums and strings
 array2d = "0.3"
 nom = "8.0.0"                       # A byte-oriented, zero-copy, parser combinators library
