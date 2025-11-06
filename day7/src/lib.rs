@@ -51,8 +51,8 @@ impl utils::Solution for Solution {
             .iter()
             .flat_map(|(lhs, rhs)| vec![*lhs, *rhs])
             .collect();
-        info!("All nodes: {:?}", remaining_nodes);
-        info!("Requirements: {:?}", requirements);
+        debug!("All nodes: {:?}", remaining_nodes);
+        debug!("Requirements: {:?}", requirements);
         let mut r = String::new();
         loop {
             let mut available_nodes: Vec<char> = remaining_nodes
@@ -77,7 +77,7 @@ impl utils::Solution for Solution {
     }
 
     fn answer_part2(&self, is_full: bool) -> Self::Result {
-                let requirements =
+        let requirements =
             self.edges
                 .iter()
                 .fold(HashMap::<char, Vec<char>>::new(), |mut acc, (lhs, rhs)| {
@@ -90,10 +90,14 @@ impl utils::Solution for Solution {
             .flat_map(|(lhs, rhs)| vec![*lhs, *rhs])
             .collect();
         let mut uncompleted_nodes = remaining_nodes.clone();
-        info!("All nodes: {:?}", remaining_nodes);
-        info!("Requirements: {:?}", requirements);
+        debug!("All nodes: {:?}", remaining_nodes);
+        debug!("Requirements: {:?}", requirements);
         let mut r = String::new();
-        let mut workers: Vec<(Option<char>, usize)> = if is_full { vec![(None, 0); 5] } else { vec![(None, 0); 2] };
+        let mut workers: Vec<(Option<char>, usize)> = if is_full {
+            vec![(None, 0); 5]
+        } else {
+            vec![(None, 0); 2]
+        };
         let fixed_time = if is_full { 60 } else { 0 };
         let mut time = 0;
         loop {
@@ -141,8 +145,7 @@ impl utils::Solution for Solution {
                 break;
             }
         }
-        info!("Total time: {}", time);
         // Implement for problem
-        Ok("".to_string())
+        Ok(time.to_string())
     }
 }
