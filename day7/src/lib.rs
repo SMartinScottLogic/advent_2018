@@ -76,7 +76,72 @@ impl utils::Solution for Solution {
         Ok(r)
     }
 
-    fn answer_part2(&self, _is_full: bool) -> Self::Result {
+    fn answer_part2(&self, is_full: bool) -> Self::Result {
+                let requirements =
+            self.edges
+                .iter()
+                .fold(HashMap::<char, Vec<char>>::new(), |mut acc, (lhs, rhs)| {
+                    acc.entry(*rhs).or_default().push(*lhs);
+                    acc
+                });
+        let mut remaining_nodes: HashSet<char> = self
+            .edges
+            .iter()
+            .flat_map(|(lhs, rhs)| vec![*lhs, *rhs])
+            .collect();
+        let mut uncompleted_nodes = remaining_nodes.clone();
+        info!("All nodes: {:?}", remaining_nodes);
+        info!("Requirements: {:?}", requirements);
+        let mut r = String::new();
+        let mut workers: Vec<(Option<char>, usize)> = if is_full { vec![(None, 0); 5] } else { vec![(None, 0); 2] };
+        let fixed_time = if is_full { 60 } else { 0 };
+        let mut time = 0;
+        loop {
+            // Assign workers
+            for worker in workers.iter_mut() {
+                if worker.1 == 0 {
+                    let mut available_nodes: Vec<char> = remaining_nodes
+                        .iter()
+                        .copied()
+                        .filter(|node| match requirements.get(node) {
+                            Some(reqs) => reqs.iter().all(|r| !uncompleted_nodes.contains(r)),
+                            None => true,
+                        })
+                        .collect();
+                    available_nodes.sort_unstable();
+                    if available_nodes.is_empty() {
+                        continue;
+                    }
+                    let next_node = available_nodes[0];
+                    debug!("Assigning node {} to worker at {}", next_node, time);
+                    worker.0 = Some(next_node);
+                    worker.1 = fixed_time + (next_node as u8 - b'A' + 1) as usize;
+                    remaining_nodes.remove(&next_node);
+                }
+            }
+            // Advance time
+            let time_advance = workers
+                .iter()
+                .filter_map(|(_, t)| if *t > 0 { Some(*t) } else { None })
+                .min();
+            if let Some(t) = time_advance {
+                time += t;
+                for worker in workers.iter_mut() {
+                    if worker.1 > 0 {
+                        worker.1 -= t;
+                        if worker.1 == 0 {
+                            let finished_node = worker.0.take().unwrap();
+                            debug!("Worker finished node {} at {}", finished_node, time);
+                            r.push(finished_node);
+                            uncompleted_nodes.remove(&finished_node);
+                        }
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+        info!("Total time: {}", time);
         // Implement for problem
         Ok("".to_string())
     }
