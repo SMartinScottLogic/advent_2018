@@ -74,7 +74,7 @@ impl utils::Solution for Solution {
             let mut next = HashMap::new();
             let min_index = *current.keys().min().unwrap() - 2;
             let max_index = *current.keys().max().unwrap() + 2;
-            info!(
+            debug!(
                 "Generation {}: range {} to {}",
                 generation, min_index, max_index
             );
@@ -107,16 +107,79 @@ impl utils::Solution for Solution {
             current = next;
         }
 
-        info!("Final state after 20 generations: {:?}", current);
+        debug!("Final state after 20 generations: {:?}", current);
         let sum: i64 = current.keys().sum();
-        info!("Sum of pot numbers with plants: {}", sum);
+        debug!("Sum of pot numbers with plants: {}", sum);
 
         // Implement for problem
-        Ok(0)
+        Ok(sum as ResultType)
     }
 
     fn answer_part2(&self, _is_full: bool) -> Self::Result {
+        let mut current = self
+            .initial_state
+            .chars()
+            .enumerate()
+            .filter(|&(_, c)| c == '#')
+            .fold(HashMap::new(), |mut acc, (i, _)| {
+                acc.insert(i as i64, true);
+                acc
+            });
+
+        let mut last_sum = current.keys().sum::<i64>();
+        let mut sum = last_sum;
+
+        for generation in 1..=1000 {
+            let mut next = HashMap::new();
+            let min_index = *current.keys().min().unwrap() - 2;
+            let max_index = *current.keys().max().unwrap() + 2;
+            debug!(
+                "Generation {}: range {} to {}",
+                generation, min_index, max_index
+            );
+            for i in min_index..=max_index {
+                let pattern: Vec<char> = (-2..=2)
+                    .map(|offset| {
+                        if current.contains_key(&(i + offset)) {
+                            '#'
+                        } else {
+                            '.'
+                        }
+                    })
+                    .collect();
+                let mut found = false;
+                for (rule_pattern, result) in &self.rules {
+                    if *rule_pattern == pattern {
+                        if *result == '#' {
+                            next.insert(i, true);
+                        }
+                        found = true;
+                        break;
+                    }
+                }
+                if !found {
+                    // Default to '.' if no rule matches
+                }
+            }
+            // Update current to next for the next generation
+            // current = next; // Note: current is immutable, need to redefine
+            current = next;
+
+            last_sum = sum;
+            sum = current.keys().sum::<i64>();
+            debug!(
+                "After generation {}: {} {}",
+                generation,
+                sum,
+                sum - last_sum
+            );
+        }
+
+        let delta = sum - last_sum;
+        let remaining_generations = 50_000_000_000i64 - 1000;
+        sum += delta * remaining_generations;
+
         // Implement for problem
-        Ok(0)
+        Ok(sum as ResultType)
     }
 }
