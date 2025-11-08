@@ -6,11 +6,11 @@ pub type ResultType = String;
 
 #[derive(Debug, Default)]
 pub struct Solution {
-    pub value: u64,
+    pub value: String,
 }
 impl Solution {
-    pub fn set_value(&mut self, value: u64) {
-        self.value = value;
+    pub fn set_value(&mut self, value: &str) {
+        self.value = value.to_owned();
     }
 }
 
@@ -22,7 +22,7 @@ impl<T: std::io::Read> TryFrom<BufReader<T>> for Solution {
         let mut solution = Self::default();
         for (id, line) in reader.lines().map_while(Result::ok).enumerate() {
             // Implement for problem
-            solution.set_value(line.parse().unwrap());
+            solution.set_value(line.trim());
         }
         Ok(solution)
     }
@@ -37,6 +37,7 @@ impl utils::Solution for Solution {
         scores.push(7);
         let mut first = 0;
         let mut second = 1;
+        let target = self.value.parse::<usize>().unwrap();
         loop {
             let sum = scores[first] + scores[second];
             if sum >= 10 {
@@ -46,10 +47,10 @@ impl utils::Solution for Solution {
             first = (first + 1 + scores[first] as usize) % scores.len();
             second = (second + 1 + scores[second] as usize) % scores.len();
 
-            if scores.len() >= (self.value as usize + 10) {
+            if scores.len() >= (target + 10) {
                 let result: String = scores
                     .iter()
-                    .skip(self.value as usize)
+                    .skip(target)
                     .take(10)
                     .map(|d| char::from_digit(*d as u32, 10).unwrap())
                     .collect();
@@ -59,7 +60,27 @@ impl utils::Solution for Solution {
     }
 
     fn answer_part2(&self, _is_full: bool) -> Self::Result {
+        let mut scores = String::new();
+        scores.push('3');
+        scores.push('7');
+        let mut first = 0;
+        let mut second = 1;
+        loop {
+            let sum = scores.as_bytes()[first] - b'0' + scores.as_bytes()[second] - b'0';
+            if sum >= 10 {
+                scores.push(char::from_digit((sum / 10) as u32, 10).unwrap());
+                if scores.ends_with(&self.value) {
+                    break;
+                }
+            }
+            scores.push(char::from_digit((sum % 10) as u32, 10).unwrap());
+            if scores.ends_with(&self.value) {
+                break;
+            }
+            first = (first + 1 + (scores.as_bytes()[first] - b'0') as usize) % scores.len();
+            second = (second + 1 + (scores.as_bytes()[second] - b'0') as usize) % scores.len();
+        }
         // Implement for problem
-        Ok("".to_string())
+        Ok(format!("{}", scores.len() - self.value.len()))
     }
 }
